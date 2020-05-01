@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:marquee/marquee.dart';
 
 class User {
   final String s;
@@ -58,8 +59,36 @@ class FloatPage extends StatelessWidget {
       appBar: AppBar(
         title: Text("Marquee"),
       ),
-      body: Center(
-        child: Text("${user.s}"),
+      body: ListView(
+        padding: EdgeInsets.only(top: 50.0),
+        children: [
+          _buildComplexMarquee(),
+        ].map(_wrapWithStuff).toList(),
+      ),
+    );
+  }
+
+  Widget _buildComplexMarquee() {
+    return Marquee(
+      text: '${user.s}',
+      style: TextStyle(fontWeight: FontWeight.bold),
+      scrollAxis: Axis.vertical,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      blankSpace: 20.0,
+      velocity: 10.0,
+      startPadding: 10.0,
+      accelerationCurve: Curves.linear,
+    );
+  }
+
+  Widget _wrapWithStuff(Widget child) {
+    return Padding(
+      padding: EdgeInsets.all(10.0),
+      child: Container(
+        height: 200,
+        width: 0,
+        color: Colors.yellow,
+        child: child,
       ),
     );
   }
