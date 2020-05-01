@@ -18,13 +18,16 @@ class HomePage extends StatelessWidget {
       body: Center(
           child: Column(
         children: <Widget>[
-          TextField(
-            textAlign: TextAlign.left,
-            decoration: InputDecoration(
-              hintText: 'Enter please',
-              hintStyle: TextStyle(color: Colors.red),
+          Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: TextField(
+              textAlign: TextAlign.left,
+              decoration: InputDecoration(
+                hintText: 'Enter please',
+                hintStyle: TextStyle(color: Colors.red),
+              ),
+              controller: textController,
             ),
-            controller: textController,
           ),
           RaisedButton(
             onPressed: () {
@@ -49,18 +52,65 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class FloatPage extends StatelessWidget {
+class FloatPage extends StatefulWidget {
   final User user;
-  FloatPage({Key key, this.user}) : super(key: key);
+  FloatPage({
+    Key key,
+    this.user,
+  }) : super(key: key);
+  @override
+  _FloatPageState createState() => _FloatPageState(user);
+}
 
+class _FloatPageState extends State<FloatPage> {
+  User user;
+  _FloatPageState(this.user);
+
+  double top = 0;
+  double left = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Marquee"),
+      appBar: AppBar(title: Text('Drag')),
+      body: Container(
+        child: Draggable(
+          child: Container(
+            padding: EdgeInsets.only(top: top, left: left),
+            child: DragItem(param: '${user.s}'),
+          ),
+          feedback: Container(
+            padding: EdgeInsets.only(top: top, left: left),
+            child: DragItem(param: '${user.s}'),
+          ),
+          childWhenDragging: Container(
+            padding: EdgeInsets.only(top: top, left: left),
+            child: Container(
+              child: DragItem(param: '${user.s}'),
+            ),
+          ),
+          onDragCompleted: () {},
+          onDragEnd: (drag) {
+            setState(() {
+              top = top + drag.offset.dy < 0 ? 0 : top + drag.offset.dy;
+              left = left + drag.offset.dx < 0 ? 0 : left + drag.offset.dx;
+            });
+          },
+        ),
       ),
-      body: ListView(
-        padding: EdgeInsets.only(top: 50.0),
+    );
+  }
+}
+
+class DragItem extends StatelessWidget {
+  DragItem({Key key, this.param}) : super(key: key);
+
+  final String param;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: ListView(
+        padding: EdgeInsets.only(left: 40, right: 40),
         children: [
           _buildComplexMarquee(),
         ].map(_wrapWithStuff).toList(),
@@ -70,8 +120,8 @@ class FloatPage extends StatelessWidget {
 
   Widget _buildComplexMarquee() {
     return Marquee(
-      text: '${user.s}',
-      style: TextStyle(fontWeight: FontWeight.bold),
+      text: '$param',
+      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
       scrollAxis: Axis.vertical,
       crossAxisAlignment: CrossAxisAlignment.start,
       blankSpace: 20.0,
@@ -83,11 +133,12 @@ class FloatPage extends StatelessWidget {
 
   Widget _wrapWithStuff(Widget child) {
     return Padding(
-      padding: EdgeInsets.all(10.0),
+      padding: EdgeInsets.all(1.0),
       child: Container(
-        height: 200,
-        width: 0,
-        color: Colors.yellow,
+        height: 100,
+        padding: EdgeInsets.only(left: 10, right: 10),
+        margin: EdgeInsets.all(10.0),
+        color: Colors.blue,
         child: child,
       ),
     );
