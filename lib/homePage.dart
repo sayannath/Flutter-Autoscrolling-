@@ -1,12 +1,13 @@
-import 'package:demo_scroll/floatPage.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
+class User {
+  final String s;
+  User(this.s);
 }
 
-class _HomePageState extends State<HomePage> {
+class HomePage extends StatelessWidget {
+  TextEditingController textController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,16 +23,44 @@ class _HomePageState extends State<HomePage> {
               hintText: 'Enter please',
               hintStyle: TextStyle(color: Colors.red),
             ),
+            controller: textController,
           ),
-          RaisedButton(onPressed: (){
-            Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext context){
-              return FloatPage();
-            }));
-          },
+          RaisedButton(
+            onPressed: () {
+              _navigateFloat(context);
+            },
             child: Text('Next'),
           ),
         ],
       )),
+    );
+  }
+
+  _navigateFloat(BuildContext context) async {
+    User user = new User(textController.text);
+    final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => FloatPage(
+                  user: user,
+                )));
+    print(result);
+  }
+}
+
+class FloatPage extends StatelessWidget {
+  final User user;
+  FloatPage({Key key, this.user}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Marquee"),
+      ),
+      body: Center(
+        child: Text("${user.s}"),
+      ),
     );
   }
 }
